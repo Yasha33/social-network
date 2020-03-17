@@ -23,6 +23,7 @@ module.exports = {
 
             if (user) {
                 if (user.password === password) {
+                    console.log(`${user.login} success log in at ${new Date()}`);
                     res.send({ id: user.id });
                 }
                 else {
