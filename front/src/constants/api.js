@@ -1,4 +1,4 @@
-const host = 'http://localhost:3001/';
+const host = 'http://185.145.107.65:3001/';
 
 export default {
     login: host + 'login',
