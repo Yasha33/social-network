@@ -54,3 +54,16 @@ img{
     border-radius: 50%;
     margin-right: 25px;
 }
+
+ @media (max-width: 650px){
+    .person{
+        flex-wrap: wrap;
+        padding-bottom: 90px;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .person > button{
+        margin-bottom: 15px;
+    }
+   
+} 
