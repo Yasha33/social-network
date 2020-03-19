@@ -17,23 +17,16 @@ export default class extends React.Component {
         };
     }
 
-    componentDidMount () {
-        window.addEventListener('keydown', ({key}) => {
-            if (key === 'Enter') {
-                this.loginButton.current.focus();
-            }
-        });
-    }
-
-    login () {
+    login() {
         const checkLogin = data => {
             if (data.id) {
                 this.props.history.push('/main', { id: data.id });
             }
             else {
-                 this.setState({ wrongData: { borderColor: 'red' } });
+                this.setState({ wrongData: { borderColor: 'red' } });
             }
         };
+
 
         fetch(api.login, {
             method: 'POST',
@@ -44,14 +37,25 @@ export default class extends React.Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-        }).then(response => response.json()).then(checkLogin);
+        }).then(response => {
+            if (response.status === 400) {
+                this.setState({ wrongData: { borderColor: 'red' } });
+            }
+            return response.json()
+        }).then(checkLogin);
     }
 
-    render () {
+    checkEnter(key) {
+        if (key.keyCode === 13) {
+            this.loginButton.current.focus();
+        }
+    }
+
+    render() {
         return (
             <div className='logIn'>
-                <input style={this.state.wrongData} type="text" defaultValue="Login" onChange={(e) => this.setState({ login: e.target.value })} />
-                <input style={this.state.wrongData} type="password" defaultValue="" onChange={(e) => this.setState({ password: e.target.value })} />
+                <input style={this.state.wrongData} type="text" placeholder="Login" onKeyDown={this.checkEnter.bind(this)} onChange={(e) => this.setState({ login: e.target.value })} />
+                <input style={this.state.wrongData} type="password" placeholder="Password" onKeyDown={this.checkEnter.bind(this)} onChange={(e) => this.setState({ password: e.target.value })} />
                 <button onClick={this.login.bind(this)} ref={this.loginButton}>Sign In</button>
             </div>
         )
