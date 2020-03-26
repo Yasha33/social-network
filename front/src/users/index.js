@@ -1,10 +1,11 @@
 import React from 'react'
-import {withRouter} from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import queryString from 'query-string'
 
 import api from '../constants/api';
 import './users.css'
 import Person from './person'
+import Loader from '../Loader'
 
 class Users extends React.Component {
 
@@ -15,13 +16,14 @@ class Users extends React.Component {
             id: null,
             allUsers: [],
             users: [],
+            loader: true,
         };
     }
 
     componentDidMount() {
         const { id } = this.props.history.location.state;
 
-        fetch(`${api.getAllUsers}?${queryString.stringify({id})}`,{
+        fetch(`${api.getAllUsers}?${queryString.stringify({ id })}`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -30,13 +32,15 @@ class Users extends React.Component {
                 id,
                 allUsers: response,
                 users: response,
+                loader: false,
             });
         });
     }
 
     changeRelation(id) {
         fetch(`${api.changeRelations}?${queryString.stringify({
-            sourceId: this.state.id, targetId: id})}`,{
+            sourceId: this.state.id, targetId: id
+        })}`, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -44,6 +48,7 @@ class Users extends React.Component {
             this.setState({
                 allUsers: response,
                 users: response,
+                loader: false,
             });
         });
 
@@ -52,26 +57,30 @@ class Users extends React.Component {
 
     search(data) {
         const users = this.state.allUsers.filter(e => e.login.toLowerCase().startsWith(data.toLowerCase()));
-        this.setState({users});
+        this.setState({ users });
     }
 
     render() {
         return (
             <div className="users">
-                <input type="text" ref={this.searchInput} placeholder="name" onChange={event => this.search(event.target.value)} />
-                {
-                    this.state.users.map((user, index) =>
-                        (
-                            <Person
-                                changeRelation={this.changeRelation.bind(this, user.id)}
-                                key={index}
-                                photo={user.photo}
-                                name={user.login}
-                                status={user.relation}
-                            />
+               { this.state.loader
+                    ? <Loader />
+                    : <>
+                    <input type="text" ref={this.searchInput} placeholder="name" onChange={event => this.search(event.target.value)} />
+                    {
+                        this.state.users.map((user, index) =>
+                            (
+                                <Person
+                                    changeRelation={this.changeRelation.bind(this, user.id)}
+                                    key={index}
+                                    photo={user.photo}
+                                    name={user.login}
+                                    status={user.relation}
+                                />
+                            )
                         )
-                    )
-                }
+                    }
+                </>}
             </div>
         )
     }
